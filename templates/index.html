@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #121212, #1f1f1f);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(33, 33, 33, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            color: #6db3fd;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        form {
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"] {
+            padding: 12px;
+            border: 1px solid #444;
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 70%;
+            outline: none;
+        }
+        
+        input[type="text"]::placeholder {
+            color: #888;
+        }
+        
+        button {
+            padding: 12px 20px;
+            background-color: #6db3fd;
+            color: #121212;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: #5a9fe9;
+            transform: translateY(-2px);
+        }
+        
+        .weather-card {
+            background-color: #2d2d2d;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+        }
+        
+        .city-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #6db3fd;
+        }
+        
+        .country {
+            font-size: 16px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+        
+        .weather-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            padding: 10px;
+            width: 30%;
+            background-color: rgba(25, 25, 25, 0.5);
+            border-radius: 10px;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+        
+        .temp {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 10px 0 0 0;
+            background: linear-gradient(90deg, #6db3fd, #89e8d0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(109, 179, 253, 0.3);
+        }
+        
+        .feels-like {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+        
+        .weather-type {
+            font-size: 22px;
+            color: #89e8d0;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .weather-description {
+            font-size: 16px;
+            color: #bbb;
+        }
+        
+        .weather-icon {
+            background-color: rgba(40, 40, 40, 0.7);
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .weather-icon i {
+            font-size: 50px;
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: rgba(255, 107, 107, 0.1);
+            border-radius: 5px;
+        }
+        
+        /* Custom icons styling */
+        .icon-sun {
+            color: #ffcc00;
+        }
+        
+        .icon-moon {
+            color: #aabbff;
+        }
+        
+        .icon-cloud {
+            color: #cccccc;
+        }
+        
+        .icon-cloud-moon {
+            color: #aabbff;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            input[type="text"] {
+                width: 60%;
+            }
+            
+            button {
+                margin-top: 10px;
+                margin-left: 0;
+            }
+        }
+    </style>
+    <!-- Add Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Real-time Weather</h1>
+        
+        <form method="POST">
+            <input type="text" name="city" placeholder="Enter city name" value="{{ city }}" required>
+            <button type="submit">Search</button>
+        </form>
+        
+        {% if error_message %}
+        <div class="error-message">
+            {{ error_message }}
+        </div>
+        {% endif %}
+        
+        {% if weather_data %}
+        <div class="weather-card">
+            <div class="city-name">{{ weather_data.city }}</div>
+            <div class="country">{{ weather_data.country }}</div>
+            
+            <div class="weather-icon">
+                <!-- Use Font Awesome icons based on day/night and weather condition -->
+                {% if weather_data.is_day %}
+                    {% if weather_data.is_sunny %}
+                    <i class="fas fa-sun icon-sun"></i>
+                    {% else %}
+                    <i class="fas fa-cloud icon-cloud"></i>
+                    {% endif %}
+                {% else %}
+                    {% if weather_data.is_sunny %}
+                    <i class="fas fa-moon icon-moon"></i>
+                    {% else %}
+                    <i class="fas fa-cloud-moon icon-cloud-moon"></i>
+                    {% endif %}
+                {% endif %}
+            </div>
+            
+            <div class="weather-type">{{ weather_data.weather }}</div>
+            <div class="weather-description">{{ weather_data.description }}</div>
+            
+            <div class="temp">{{ weather_data.temp }}°C</div>
+            <div class="feels-like">Feels like {{ weather_data.feels_like }}°C</div>
+            
+            <div class="weather-info">
+                <div class="info-item">
+                    <div class="info-label">Humidity</div>
+                    <div class="info-value">{{ weather_data.humidity }}%</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Wind</div>
+                    <div class="info-value">{{ weather_data.wind }} km/h</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Time</div>
+                    <div class="info-value">{{ weather_data.time_of_day }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // This script will run in the browser to ensure we can get the local time
+        // This is a fallback in case the server-side logic doesn't work
+        document.addEventListener('DOMContentLoaded', function() {
+            // Only run if we have weather data
+            if (document.querySelector('.weather-card')) {
+                const now = new Date();
+                const hours = now.getHours();
+                const isDay = hours >= 6 && hours < 18; // Assume day is between 6am-6pm
+                
+                // Get the icon container
+                const iconContainer = document.querySelector('.weather-icon');
+                
+                // We need to analyze the weather description to determine if it's sunny or cloudy
+                const weatherType = document.querySelector('.weather-type').textContent.toLowerCase();
+                const isSunny = weatherType.includes('clear') || weatherType.includes('sunny');
+                
+                // Clear existing icon
+                iconContainer.innerHTML = '';
+                
+                // Create the new icon
+                const icon = document.createElement('i');
+                
+                if (isDay) {
+                    if (isSunny) {
+                        icon.className = 'fas fa-sun icon-sun';
+                    } else {
+                        icon.className = 'fas fa-cloud icon-cloud';
+                    }
+                } else {
+                    if (isSunny) {
+                        icon.className = 'fas fa-moon icon-moon';
+                    } else {
+                        icon.className = 'fas fa-cloud-moon icon-cloud-moon';
+                    }
+                }
+                
+                iconContainer.appendChild(icon);
+            }
+        });
+    </script>
+</body>
+</html>
