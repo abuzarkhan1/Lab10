@@ -1,6 +1,7 @@
 flask==2.0.1
 werkzeug==2.3.7
 pytz==2023.3
+requests
 
 
 # 8c1a5be7024c0eba1ebdeae533509c60
