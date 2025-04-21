@@ -2,8 +2,10 @@ from flask import Flask, render_template, request
 import requests
 from datetime import datetime
 import pytz
+from flask_cors import CORS  # 
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}}) 
 
 API_KEY = "8c1a5be7024c0eba1ebdeae533509c60"  
 
@@ -17,7 +19,7 @@ def index():
         try:
             url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
             response = requests.get(url)
-            response.raise_for_status()  
+            response.raise_for_status() 
             
             data = response.json()
             
@@ -30,7 +32,6 @@ def index():
             
             weather_id = data['weather'][0]['id']
             is_sunny = weather_id == 800  
-    
             weather_data = {
                 'city': data['name'],
                 'country': data['sys']['country'],
@@ -57,4 +58,4 @@ def index():
     return render_template('index.html', city=city, weather_data=weather_data, error_message=error_message)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)  
