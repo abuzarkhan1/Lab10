@@ -201,7 +201,6 @@
             }
         }
     </style>
-    <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 </head>
 <body>
@@ -225,7 +224,6 @@
             <div class="country">{{ weather_data.country }}</div>
             
             <div class="weather-icon">
-                <!-- Use Font Awesome icons based on day/night and weather condition -->
                 {% if weather_data.is_day %}
                     {% if weather_data.is_sunny %}
                     <i class="fas fa-sun icon-sun"></i>
@@ -266,26 +264,15 @@
     </div>
 
     <script>
-        // This script will run in the browser to ensure we can get the local time
-        // This is a fallback in case the server-side logic doesn't work
         document.addEventListener('DOMContentLoaded', function() {
-            // Only run if we have weather data
             if (document.querySelector('.weather-card')) {
                 const now = new Date();
                 const hours = now.getHours();
-                const isDay = hours >= 6 && hours < 18; // Assume day is between 6am-6pm
-                
-                // Get the icon container
+                const isDay = hours >= 6 && hours < 18; 
                 const iconContainer = document.querySelector('.weather-icon');
-                
-                // We need to analyze the weather description to determine if it's sunny or cloudy
                 const weatherType = document.querySelector('.weather-type').textContent.toLowerCase();
                 const isSunny = weatherType.includes('clear') || weatherType.includes('sunny');
-                
-                // Clear existing icon
                 iconContainer.innerHTML = '';
-                
-                // Create the new icon
                 const icon = document.createElement('i');
                 
                 if (isDay) {
