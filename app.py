@@ -5,7 +5,7 @@ import pytz
 
 app = Flask(__name__)
 
-API_KEY = "8c1a5be7024c0eba1ebdeae533509c60"  # Replace with your actual API key
+API_KEY = "8c1a5be7024c0eba1ebdeae533509c60"  
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -17,11 +17,11 @@ def index():
         try:
             url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
             response = requests.get(url)
-            response.raise_for_status()  # Raise exception for HTTP errors
+            response.raise_for_status()  
             
             data = response.json()
             
-            timezone_offset = data['timezone']  # Offset in seconds from UTC
+            timezone_offset = data['timezone']  
             local_time = datetime.utcnow().replace(tzinfo=pytz.utc)
             local_time = local_time.astimezone(pytz.FixedOffset(timezone_offset//60))
             
@@ -29,16 +29,15 @@ def index():
             is_day = 6 <= hour < 18
             
             weather_id = data['weather'][0]['id']
-            is_sunny = weather_id == 800  # Clear sky
-            
-            # Prepare weather data for template
+            is_sunny = weather_id == 800  
+    
             weather_data = {
                 'city': data['name'],
                 'country': data['sys']['country'],
                 'temp': round(data['main']['temp']),
                 'feels_like': round(data['main']['feels_like']),
                 'humidity': data['main']['humidity'],
-                'wind': round(data['wind']['speed'] * 3.6, 1),  # Convert m/s to km/h
+                'wind': round(data['wind']['speed'] * 3.6, 1),  
                 'weather': data['weather'][0]['main'],
                 'description': data['weather'][0]['description'].capitalize(),
                 'icon': data['weather'][0]['icon'],
